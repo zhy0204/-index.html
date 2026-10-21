@@ -53,7 +53,6 @@ h2 {
   margin: 0 0 16px;
 }
 
-/* 頂部獨立分頁按鈕 */
 nav {
   display: flex;
   gap: 10px;
@@ -86,7 +85,6 @@ nav button.active {
   border-color: var(--cyan);
 }
 
-/* 分頁隱藏與顯示控制 */
 .page { display: none; }
 .page.active { display: block; }
 
@@ -184,7 +182,6 @@ nav button.active {
   color: var(--muted);
 }
 
-/* 進度條樣式 */
 .progress-track {
   height: 7px;
   background: #263d30;
@@ -262,6 +259,8 @@ nav button.active {
   stroke-width: 5;
   stroke-linecap: round;
   filter: drop-shadow(0 0 5px #00e5ffb0);
+  transform-origin: 150px 150px;
+  transition: transform 0.3s ease;
 }
 .needle-hub { fill: var(--cyan); stroke: white; stroke-width: 2; }
 
@@ -306,7 +305,6 @@ th { background-color: var(--panel2); color: var(--muted); }
   <div class="subtitle">中華電信 AIDC 算力中心生態友善提案：整合生態監測、風險評估與保險資金試算原型。</div>
 </header>
 
-<!-- 頂部獨立分頁切換按鈕 -->
 <nav>
   <button type="button" onclick="switchPage('monitor')" id="btn-monitor" class="active">📊 分頁一：生態監測與風險評估</button>
   <button type="button" onclick="switchPage('finance')" id="btn-finance">🛡️ 分頁二：工具二保險與資金試算</button>
@@ -341,7 +339,6 @@ th { background-color: var(--panel2); color: var(--muted); }
     </div>
   </section>
 
-  <!-- 四張帶有動態進度條的指標卡片 -->
   <section class="cards">
     <div class="card">
       <div class="card-top">
@@ -424,10 +421,8 @@ th { background-color: var(--panel2); color: var(--muted); }
               <text x="35" y="174" class="gauge-caption" text-anchor="middle">0</text>
               <text x="150" y="26" class="gauge-caption" text-anchor="middle">50</text>
               <text x="265" y="174" class="gauge-caption" text-anchor="middle">100</text>
-              <g id="needleBeforeGroup">
-                <line class="needle" x1="150" y1="150" x2="150" y2="55"/>
-                <circle class="needle-hub" cx="150" cy="150" r="7"/>
-              </g>
+              <line class="needle" id="needleBefore" x1="150" y1="150" x2="150" y2="55"/>
+              <circle class="needle-hub" cx="150" cy="150" r="7"/>
               <text x="150" y="132" class="gauge-score" id="scoreBefore" text-anchor="middle">0</text>
               <text x="150" y="153" class="gauge-caption" id="levelBefore" text-anchor="middle">計算中</text>
             </svg>
@@ -443,10 +438,8 @@ th { background-color: var(--panel2); color: var(--muted); }
               <text x="35" y="174" class="gauge-caption" text-anchor="middle">0</text>
               <text x="150" y="26" class="gauge-caption" text-anchor="middle">50</text>
               <text x="265" y="174" class="gauge-caption" text-anchor="middle">100</text>
-              <g id="needleAfterGroup">
-                <line class="needle" x1="150" y1="150" x2="150" y2="55"/>
-                <circle class="needle-hub" cx="150" cy="150" r="7"/>
-              </g>
+              <line class="needle" id="needleAfter" x1="150" y1="150" x2="150" y2="55"/>
+              <circle class="needle-hub" cx="150" cy="150" r="7"/>
               <text x="150" y="132" class="gauge-score" id="scoreAfter" text-anchor="middle">0</text>
               <text x="150" y="153" class="gauge-caption" id="levelAfter" text-anchor="middle">計算中</text>
             </svg>
@@ -640,4 +633,71 @@ function getRiskLevel(score) {
   return '高風險';
 }
 
-function g
+function getRiskClass(score) {
+  if (score < 30) return 'low';
+  if (score < 60) return 'medium';
+  return 'high';
+}
+
+function updateGauge(type, score) {
+  // 正確抓取分數與等級 DOM 標籤
+  const scoreEl = document.getElementById('score' + type);
+  const levelEl = document.getElementById('level' + type);
+  
+  if (scoreEl) {
+    scoreEl.textContent = score.toFixed(1);
+  }
+  if (levelEl) {
+    levelEl.textContent = getRiskLevel(score);
+  }
+
+  // 旋轉指針位置
+  const angle = (score / 100) * 180 - 90;
+  const needle = document.getElementById('needle' + type);
+  if (needle) {
+    needle.style.transform = `rotate(${angle}deg)`;
+  }
+}
+
+function loadScenario() {
+  const sc = document.getElementById('scenarioSelect').value;
+  if (sc === 'small') document.getElementById('lossInput').value = 120000;
+  else if (sc === 'normal') document.getElementById('lossInput').value = 800000;
+  else if (sc === 'pressure') document.getElementById('lossInput').value = 2200000;
+  calculateFinance();
+}
+
+function calculateFinance() {
+  let L = parseFloat(document.getElementById('lossInput').value) || 0;
+  let D = parseFloat(document.getElementById('deductibleInput').value) || 0;
+  let C = parseFloat(document.getElementById('claimLimitInput').value) || 0;
+  let A = parseFloat(document.getElementById('annualLimitInput').value) || 0;
+  let T = parseFloat(document.getElementById('targetFundInput').value) || 0;
+  let F = parseFloat(document.getElementById('currentFundInput').value) || 0;
+  let X = parseFloat(document.getElementById('excludeInput').value) || 0;
+
+  let claim = Math.min(Math.max(L - D, 0), C, A);
+  let burden = L + X - claim;
+  let gap = Math.max(T - F, 0);
+
+  const rc = document.getElementById('resClaim');
+  const rb = document.getElementById('resBurden');
+  const rg = document.getElementById('resGap');
+  if(rc) rc.innerText = claim.toLocaleString();
+  if(rb) rb.innerText = burden.toLocaleString();
+  if(rg) rg.innerText = gap.toLocaleString();
+}
+
+window.onload = function() {
+  initRiskTable();
+  calculateFinance();
+};
+
+['areaInput', 'plantsInput', 'visitsInput', 'budgetInput'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', calculateAll);
+});
+</script>
+
+</body>
+</html>
