@@ -112,28 +112,21 @@ nav button.active {
 
 .input-box label {
   display: block;
-  min-height: 40px;
   font-size: 13px;
   color: var(--muted);
-  line-height: 1.6;
+  line-height: 1.5;
+  margin-bottom: 4px;
 }
 
 .input-box input, .input-box select {
   width: 100%;
-  margin-top: 8px;
   border: 1px solid #3b5d49;
   border-radius: 8px;
-  padding: 10px;
+  padding: 8px;
   background: #081710;
   color: white;
-  font-size: 17px;
+  font-size: 15px;
   outline: none;
-}
-
-.unit {
-  margin-top: 6px;
-  color: var(--muted);
-  font-size: 12px;
 }
 
 .cards {
@@ -200,22 +193,23 @@ nav button.active {
 
 .risk-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: 1.1fr 0.9fr;
   gap: 16px;
+  align-items: start;
 }
 
-.risk-table-wrap { overflow-x: auto; }
+.risk-table-wrap { overflow-x: auto; margin-bottom: 12px; }
 
 .risk-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 470px;
+  min-width: 450px;
   font-size: 13px;
 }
 
 .risk-table th, .risk-table td {
   border-bottom: 1px solid var(--line);
-  padding: 11px 8px;
+  padding: 10px 6px;
   text-align: center;
 }
 
@@ -223,8 +217,8 @@ nav button.active {
 .risk-table th:first-child, .risk-table td:first-child { text-align: left; }
 
 .risk-table select {
-  width: 65px;
-  padding: 7px;
+  width: 60px;
+  padding: 6px;
   border-radius: 7px;
   border: 1px solid #3b5d49;
   background: #081710;
@@ -238,20 +232,21 @@ nav button.active {
 .gauge-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .gauge-card {
   background: var(--panel2);
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 12px 8px;
+  padding: 10px 6px;
   text-align: center;
 }
 
-.gauge-title { color: var(--muted); font-size: 13px; margin-bottom: 4px; }
-.gauge { width: 100%; max-width: 270px; display: block; margin: 0 auto; overflow: visible; }
-.gauge-score { font-size: 29px; font-weight: bold; fill: var(--text); }
+.gauge-title { color: var(--muted); font-size: 12px; margin-bottom: 4px; }
+.gauge { width: 100%; max-width: 220px; display: block; margin: 0 auto; overflow: visible; }
+.gauge-score { font-size: 26px; font-weight: bold; fill: var(--text); }
 .gauge-caption { font-size: 11px; fill: var(--muted); }
 
 .needle {
@@ -265,8 +260,7 @@ nav button.active {
 .needle-hub { fill: var(--cyan); stroke: white; stroke-width: 2; }
 
 .summary {
-  margin-top: 14px;
-  padding: 15px;
+  padding: 14px;
   border-radius: 10px;
   background: #091811;
   border: 1px solid var(--line);
@@ -280,17 +274,16 @@ nav button.active {
 .level.high { color: var(--red); }
 
 .note {
-  margin-top: 12px;
   font-size: 12px;
   color: var(--muted);
-  line-height: 1.8;
+  line-height: 1.6;
 }
 
 table { width: 100%; border-collapse: collapse; margin-top: 10px; }
 th, td { border: 1px solid var(--line); padding: 10px; text-align: left; font-size: 14px; }
 th { background-color: var(--panel2); color: var(--muted); }
 
-@media (max-width: 850px) {
+@media (max-width: 900px) {
   .input-grid, .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .risk-layout { grid-template-columns: 1fr; }
 }
@@ -314,31 +307,38 @@ th { background-color: var(--panel2); color: var(--muted); }
 <!-- ==================== 分頁一內容 ==================== -->
 <div id="page-monitor" class="page active">
   <section class="panel">
-    <h2>一、專案執行數據</h2>
+    <h2>一、專案執行數據與目標設定</h2>
+    <div class="subtitle" style="margin-bottom:14px">在此可調整「實際執行數值」與「預期目標」，所有卡片、儀表板與分頁三將自動即時連動。</div>
+    
     <div class="input-grid">
       <div class="input-box">
-        <label for="areaInput">棲地復育面積</label>
+        <label for="areaInput">棲地復育 (實際)</label>
         <input id="areaInput" type="number" min="0" step="1" value="4000">
-        <div class="unit">目標：5,000 m²</div>
+        <label for="areaTarget" style="margin-top:8px;">目標面積 (m²)</label>
+        <input id="areaTarget" type="number" min="1" step="1" value="5000">
       </div>
       <div class="input-box">
-        <label for="plantsInput">原生植物存活株數</label>
+        <label for="plantsInput">原生植物 (實際)</label>
         <input id="plantsInput" type="number" min="0" step="1" value="450">
-        <div class="unit">目標：500 株</div>
+        <label for="plantsTarget" style="margin-top:8px;">目標株數 (株)</label>
+        <input id="plantsTarget" type="number" min="1" step="1" value="500">
       </div>
       <div class="input-box">
-        <label for="visitsInput">已完成監測次數</label>
+        <label for="visitsInput">已完成監測 (實際)</label>
         <input id="visitsInput" type="number" min="0" step="1" value="11">
-        <div class="unit">目標：12 次</div>
+        <label for="visitsTarget" style="margin-top:8px;">目標次數 (次)</label>
+        <input id="visitsTarget" type="number" min="1" step="1" value="12">
       </div>
       <div class="input-box">
-        <label for="budgetInput">自籌經費金額（新臺幣）</label>
+        <label for="budgetInput">自籌經費 (實際)</label>
         <input id="budgetInput" type="number" min="0" step="1000" value="700000">
-        <div class="unit">目標：NT$700,000</div>
+        <label for="budgetTarget" style="margin-top:8px;">目標經費 (NT$)</label>
+        <input id="budgetTarget" type="number" min="1" step="1000" value="700000">
       </div>
     </div>
   </section>
 
+  <!-- 四張指標卡片 -->
   <section class="cards">
     <div class="card">
       <div class="card-top">
@@ -510,11 +510,31 @@ th { background-color: var(--panel2); color: var(--muted); }
   <section class="panel">
     <h2>工具三：生態監測儀表板與待辦事件</h2>
     <table>
-      <tr><th>監測指標項目</th><th>當期數值 / 狀態</th><th>燈號判定</th></tr>
-      <tr><td><strong>棲地復育進度</strong></td><td>4,000 / 5,000 平方公尺 (80%)</td><td><span style="color: var(--green); font-weight: bold;">🟢 綠燈</span></td></tr>
-      <tr><td><strong>原生植物存活率</strong></td><td>420 / 500 株 (84%)</td><td><span style="color: var(--red); font-weight: bold;">🔴 紅燈</span></td></tr>
-      <tr><td><strong>監測完成率</strong></td><td>11 / 12 次 (91.7%)</td><td><span style="color: var(--yellow); font-weight: bold;">🟡 黃燈</span></td></tr>
-      <tr><td><strong>自留資金覆蓋率</strong></td><td>50 / 70 萬元 (71.4%)</td><td><span style="color: var(--red); font-weight: bold;">🔴 紅燈</span></td></tr>
+      <tr>
+        <th>監測指標項目</th>
+        <th>當期數值 / 目標與狀態</th>
+        <th>燈號判定</th>
+      </tr>
+      <tr>
+        <td><strong>棲地復育進度</strong></td>
+        <td id="dashAreaText">計算中...</td>
+        <td id="dashAreaLamp">計算中...</td>
+      </tr>
+      <tr>
+        <td><strong>原生植物存活率</strong></td>
+        <td id="dashPlantsText">計算中...</td>
+        <td id="dashPlantsLamp">計算中...</td>
+      </tr>
+      <tr>
+        <td><strong>監測完成率</strong></td>
+        <td id="dashVisitsText">計算中...</td>
+        <td id="dashVisitsLamp">計算中...</td>
+      </tr>
+      <tr>
+        <td><strong>自籌經費覆蓋率</strong></td>
+        <td id="dashFundText">計算中...</td>
+        <td id="dashFundLamp">計算中...</td>
+      </tr>
     </table>
   </section>
 </div>
@@ -571,15 +591,25 @@ function calculateAll() {
   const visits = parseFloat(document.getElementById('visitsInput').value) || 0;
   const budget = parseFloat(document.getElementById('budgetInput').value) || 0;
 
-  const areaRatio = (area / 5000) * 100;
-  const plantsRatio = (plants / 500) * 100;
-  const visitsRatio = (visits / 12) * 100;
-  const fundRatio = (budget / 700000) * 100;
+  const areaTarget = parseFloat(document.getElementById('areaTarget').value) || 1;
+  const plantsTarget = parseFloat(document.getElementById('plantsTarget').value) || 1;
+  const visitsTarget = parseFloat(document.getElementById('visitsTarget').value) || 1;
+  const budgetTarget = parseFloat(document.getElementById('budgetTarget').value) || 1;
 
-  updateCard('area', areaRatio, area.toLocaleString() + ' / 5,000 m²', 80, 70);
-  updateCard('plants', plantsRatio, plants + ' / 500 株', 90, 85);
-  updateCard('visits', visitsRatio, visits + ' / 12 次', 100, 90);
-  updateCard('fund', fundRatio, 'NT$' + budget.toLocaleString() + ' / NT$700,000', 100, 80);
+  const areaRatio = (area / areaTarget) * 100;
+  const plantsRatio = (plants / plantsTarget) * 100;
+  const visitsRatio = (visits / visitsTarget) * 100;
+  const fundRatio = (budget / budgetTarget) * 100;
+
+  updateCard('area', areaRatio, `${area.toLocaleString()} / ${areaTarget.toLocaleString()} m²`, 80, 70);
+  updateCard('plants', plantsRatio, `${plants} / ${plantsTarget} 株`, 90, 85);
+  updateCard('visits', visitsRatio, `${visits} / ${visitsTarget} 次`, 100, 90);
+  updateCard('fund', fundRatio, `NT$${budget.toLocaleString()} / NT$${budgetTarget.toLocaleString()}`, 100, 80);
+
+  updateDashboardRow('dashArea', areaRatio, `${area.toLocaleString()} / ${areaTarget.toLocaleString()} 平方公尺`, 80, 70);
+  updateDashboardRow('dashPlants', plantsRatio, `${plants} / ${plantsTarget} 株`, 90, 85);
+  updateDashboardRow('dashVisits', visitsRatio, `${visits} / ${visitsTarget} 次`, 100, 90);
+  updateDashboardRow('dashFund', fundRatio, `NT$${budget.toLocaleString()} / NT$${budgetTarget.toLocaleString()}`, 100, 80);
 
   let totalBefore = 0;
   let totalAfter = 0;
@@ -627,6 +657,25 @@ function updateCard(id, ratio, detailText, greenThresh, yellowThresh) {
   }
 }
 
+function updateDashboardRow(prefix, ratio, detailText, greenThresh, yellowThresh) {
+  const textEl = document.getElementById(prefix + 'Text');
+  const lampEl = document.getElementById(prefix + 'Lamp');
+  
+  if(textEl) {
+    textEl.innerText = `${detailText} (${ratio.toFixed(1)}%)`;
+  }
+  
+  if(lampEl) {
+    if (ratio >= greenThresh) {
+      lampEl.innerHTML = '<span style="color: var(--green); font-weight: bold;">🟢 綠燈</span>';
+    } else if (ratio >= yellowThresh) {
+      lampEl.innerHTML = '<span style="color: var(--yellow); font-weight: bold;">🟡 黃燈</span>';
+    } else {
+      lampEl.innerHTML = '<span style="color: var(--red); font-weight: bold;">🔴 紅燈</span>';
+    }
+  }
+}
+
 function getRiskLevel(score) {
   if (score < 30) return '低風險';
   if (score < 60) return '中風險';
@@ -640,18 +689,12 @@ function getRiskClass(score) {
 }
 
 function updateGauge(type, score) {
-  // 正確抓取分數與等級 DOM 標籤
   const scoreEl = document.getElementById('score' + type);
   const levelEl = document.getElementById('level' + type);
   
-  if (scoreEl) {
-    scoreEl.textContent = score.toFixed(1);
-  }
-  if (levelEl) {
-    levelEl.textContent = getRiskLevel(score);
-  }
+  if (scoreEl) scoreEl.textContent = score.toFixed(1);
+  if (levelEl) levelEl.textContent = getRiskLevel(score);
 
-  // 旋轉指針位置
   const angle = (score / 100) * 180 - 90;
   const needle = document.getElementById('needle' + type);
   if (needle) {
@@ -693,7 +736,7 @@ window.onload = function() {
   calculateFinance();
 };
 
-['areaInput', 'plantsInput', 'visitsInput', 'budgetInput'].forEach(id => {
+['areaInput', 'areaTarget', 'plantsInput', 'plantsTarget', 'visitsInput', 'visitsTarget', 'budgetInput', 'budgetTarget'].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', calculateAll);
 });
