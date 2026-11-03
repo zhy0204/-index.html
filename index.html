@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生態監測與風險評估暨資金管理平台</title>
+
+<style>
+:root {
+  --bg:#07130f;
+  --panel:#10221a;
+  --panel2:#142a20;
+  --line:#294637;
+  --text:#effcf3;
+  --muted:#a4bcae;
+  --green:#35e08b;
+  --yellow:#ffd166;
+  --red:#ff5c70;
+  --cyan:#00e5ff;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  padding:18px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,"Noto Sans TC",sans-serif;
+}
+
+.container{
+  width:100%;
+  max-width:1200px;
+  margin:auto;
+}
+
+header{margin-bottom:22px}
+
+h1{
+  margin:0 0 8px;
+  font-size:clamp(23px,4vw,34px);
+}
+
+h2{
+  font-size:19px;
+  margin:0 0 16px;
+}
+
+h3{font-size:16px}
+
+.subtitle{
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.7;
+}
+
+nav{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+  border-bottom:2px solid var(--line);
+  padding-bottom:10px;
+  flex-wrap:wrap;
+}
+
+nav button{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-size:14px;
+  padding:12px 16px;
+  border-radius:8px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+nav button.active{
+  background:var(--cyan);
+  color:#07130f;
+  border-color:var(--cyan);
+}
+
+.page{display:none}
+.page.active{display:block}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:18px;
+  margin-bottom:18px;
+  box-shadow:0 5px 20px #00000018;
+}
+
+.input-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+}
+
+.input-box{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:14px;
+  min-width:0;
+}
+
+.input-box label{
+  display:block;
+  min-height:40px;
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.6;
+}
+
+.input-box input,
+.input-box select{
+  width:100%;
+  margin-top:8px;
+  border:1px solid #3b5d49;
+  border-radius:8px;
+  padding:10px;
+  background:#081710;
+  color:white;
+  font-size:16px;
+  outline:none;
+}
+
+.input-box input:focus,
+.input-box select:focus,
+.risk-table select:focus{
+  border-color:var(--cyan);
+}
+
+.unit{
+  margin-top:6px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:16px;
+  min-width:0;
+}
+
+.card-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.card-title{
+  font-size:14px;
+  color:var(--muted);
+}
+
+.lamp{
+  width:13px;
+  height:13px;
+  border-radius:50%;
+  flex-shrink:0;
+  background:#718078;
+}
+
+.lamp.green{
+  background:var(--green);
+  box-shadow:0 0 12px #35e08b88;
+}
+
+.lamp.yellow{
+  background:var(--yellow);
+  box-shadow:0 0 12px #ffd16688;
+}
+
+.lamp.red{
+  background:var(--red);
+  box-shadow:0 0 12px #ff5c7088;
+}
+
+.card-value{
+  font-size:clamp(22px,2.5vw,30px);
+  font-weight:bold;
+  margin:14px 0 6px;
+  overflow-wrap:anywhere;
+}
+
+.card-detail{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.progress-track{
+  height:7px;
+  background:#263d30;
+  border-radius:99px;
+  overflow:hidden;
+  margin-top:13px;
+}
+
+.progress-fill{
+  height:100%;
+  width:0%;
+  border-radius:99px;
+  background:var(--green);
+  transition:width .3s ease;
+}
+
+.risk-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:16px;
+}
+
+.risk-table-wrap{overflow-x:auto}
+
+.risk-table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:470px;
+  font-size:13px;
+}
+
+.risk-table th,
+.risk-table td{
+  border-bottom:1px solid var(--line);
+  padding:11px 8px;
+  text-align:center;
+}
+
+.risk-table th{color:var(--muted);font-weight:normal}
+
+.risk-table th:first-child,
+.risk-table td:first-child{text-align:left}
+
+.risk-table select{
+  width:65px;
+  padding:7px;
+  border-radius:7px;
+  border:1px solid #3b5d49;
+  background:#081710;
+  color:white;
+  font-size:14px;
+}
+
+.weight{color:var(--cyan);font-weight:bold}
+.contribution{font-weight:bold;white-space:nowrap}
+
+.gauge-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.gauge-card{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px 8px;
+  text-align:center;
+  min-width:0;
+}
+
+.gauge-title{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:4px;
+}
+
+.gauge{
+  width:100%;
+  max-width:270px;
+  display:block;
+  margin:0 auto;
+  overflow:visible;
+}
+
+.gauge-score{
+  font-size:29px;
+  font-weight:bold;
+  fill:var(--text);
+}
+
+.gauge-caption{
+  font-size:11px;
+  fill:var(--muted);
+}
+
+.needle{
+  stroke:var(--cyan);
+  stroke-width:5;
+  stroke-linecap:round;
+  filter:drop-shadow(0 0 5px #00e5ffb0);
+  transition:all .25s ease;
+}
+
+.needle-hub{
+  fill:var(--cyan);
+  stroke:white;
+  stroke-width:2;
+}
+
+.summary{
+  margin-top:14px;
+  padding:15px;
+  border-radius:10px;
+  background:#091811;
+  border:1px solid var(--line);
+  line-height:1.8;
+  font-size:14px;
+}
+
+.level{font-weight:bold}
+.level.low{color:var(--green)}
+.level.medium{color:var(--yellow)}
+.level.high{color:var(--red)}
+
+.note{
+  margin-top:12px;
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.8;
+}
+
+.recommendation-item{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-left:5px solid var(--green);
+  border-radius:10px;
+  padding:14px;
+  margin-bottom:12px;
+  line-height:1.8;
+}
+
+.recommendation-item.high{border-left-color:var(--red)}
+.recommendation-item.medium{border-left-color:var(--yellow)}
+.recommendation-item.low{border-left-color:var(--green)}
+
+.recommendation-item strong{
+  display:block;
+  margin-bottom:5px;
+}
+
+.recommendation-item p{
+  margin:4px 0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.recommendation-status{
+  display:inline-block;
+  font-size:12px;
+  font-weight:bold;
+  padding:3px 9px;
+  border-radius:20px;
+  margin-bottom:7px;
+}
+
+.status-high{color:var(--red);background:#ff5c7020}
+.status-medium{color:var(--yellow);background:#ffd16620}
+.status-low{color:var(--green);background:#35e08b20}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+
+th,td{
+  border:1px solid var(--line);
+  padding:10px;
+  text-align:left;
+  font-size:14px;
+}
+
+th{
+  background:var(--panel2);
+  color:var(--muted);
+}
+
+.footer{
+  text-align:center;
+  padding:12px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+@media(max-width:850px){
+  .input-grid,.cards{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .risk-layout{grid-template-columns:1fr}
+}
+
+@media(max-width:430px){
+  body{padding:10px}
+  .panel{padding:13px}
+  .card{padding:11px}
+  .gauge-grid{gap:6px}
+  .gauge-card{padding:8px 3px}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <h1>🌿 生態監測與風險評估暨資金管理平台</h1>
+  <div class="subtitle">
+    中華電信 AIDC 算力中心生態友善提案：整合生態監測、風險評估與保險資金試算原型。
+  </div>
+</header>
+
+<nav>
+  <button type="button" onclick="switchPage('monitor')" id="btn-monitor" class="active">
+    📊 分頁一：生態監測與風險評估
+  </button>
+  <button type="button" onclick="switchPage('finance')" id="btn-finance">
+    🛡️ 分頁二：保險與資金試算
+  </button>
+  <button type="button" onclick="switchPage('dashboard')" id="btn-dashboard">
+    🚨 分頁三：監測儀表板
+  </button>
+</nav>
+
+<!-- ==================== 分頁一 ==================== -->
+
+<div id="page-monitor" class="page active">
+
+<section class="panel">
+<h2>一、專案執行數據</h2>
+
+<div class="input-grid">
+
+<div class="input-box">
+<label for="areaInput">棲地復育面積</label>
+<input id="areaInput" type="number" min="0" value="4000">
+<div class="unit">目標：
+   <input id="targetAreaInput" type="number" min="0.01" step="any" value="5000" aria-label="棲地復育面積目標" style="width:105px;margin:0 4px;padding:5px;font-size:13px">
+   m²
+</div>
+</div>
+
+<div class="input-box">
+<label for="plantsInput">原生植物存活株數</label>
+<input id="plantsInput" type="number" min="0" value="450">
+<div class="unit">目標：
+   <input id="targetPlantsInput" type="number" min="0.01" step="any" value="500" aria-label="原生植物存活株數目標" style="width:90px;margin:0 4px;padding:5px;font-size:13px">
+   株
+</div>
+</div>
+
+<div class="input-box">
+<label for="visitsInput">已完成監測次數</label>
+<input id="visitsInput" type="number" min="0" value="11">
+<div class="unit">目標：
+   <input id="targetVisitsInput" type="number" min="0.01" step="any" value="12" aria-label="監測次數目標" style="width:75px;margin:0 4px;padding:5px;font-size:13px">
+   次
+</div>
+</div>
+
+<div class="input-box">
+<label for="budgetInput">自籌經費金額（新臺幣）</label>
+<input id="budgetInput" type="number" min="0" value="700000">
+<div class="unit">目標：NT$
+   <input id="targetBudgetInput" type="number" min="0.01" step="any" value="700000" aria-label="自籌經費目標" style="width:120px;margin:0 4px;padding:5px;font-size:13px">
+</div>
+</div>
+
+</div>
+</section>
+
+<section class="cards">
+
+<div class="card">
+<div class="card-top">
+<div class="card-title">棲地復育進度</div>
+<span class="lamp" id="lampArea"></span>
+</div>
+<div class="card-value" id="areaValue">80%</div>
+<div class="card-detail" id="areaDetail">4,000 / 5,000 m²</div>
+<div class="progress-track"><div class="progress-fill" id="areaBar"></div></div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div class="card-title">原生植物存活率</div>
+<span class="lamp" id="lampPlants"></span>
+</div>
+<div class="card-value" id="plantsValue">90%</div>
+<div class="card-detail" id="plantsDetail">450 / 500 株</div>
+<div class="progress-track"><div class="progress-fill" id="plantsBar"></div></div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div class="card-title">監測完成率</div>
+<span class="lamp" id="lampVisits"></span>
+</div>
+<div class="card-value" id="visitsValue">91.7%</div>
+<div class="card-detail" id="visitsDetail">11 / 12 次</div>
+<div class="progress-track"><div class="progress-fill" id="visitsBar"></div></div>
+</div>
+
+<div class="card">
+<div class="card-top">
+<div class="card-title">自籌經費覆蓋率</div>
+<span class="lamp" id="lampFund"></span>
+</div>
+<div class="card-value" id="fundValue">100%</div>
+<div class="card-detail" id="fundDetail">NT$700,000 / NT$700,000</div>
+<div class="progress-track"><div class="progress-fill" id="fundBar"></div></div>
+</div>
+
+</section>
+
+<section class="panel">
+<h2>二、生態風險評估</h2>
+
+<div class="risk-layout">
+
+<div>
+<h3>風險項目與評分</h3>
+
+<div class="risk-table-wrap">
+<table class="risk-table">
+<thead>
+<tr>
+<th>風險項目</th>
+<th>權重</th>
+<th>施工前</th>
+<th>施工後</th>
+<th>前貢獻</th>
+<th>後貢獻</th>
+</tr>
+</thead>
+<tbody id="riskRows"></tbody>
+</table>
+</div>
+
+<div class="note">
+評分範圍為 1～5 分，分數越高代表風險越高。<br>
+加權分數依各項權重計算，權重合計為 100%。<br>
+特別規則：任一風險項目達 5 分，該階段直接判定為高風險。
+</div>
+</div>
+
+<div>
+<h3>風險加權分數儀表</h3>
+
+<div class="gauge-grid">
+
+<div class="gauge-card">
+<div class="gauge-title">施工前風險</div>
+<svg class="gauge" viewBox="0 0 300 190">
+<!-- 綠色：0～30 -->
+<path d="M55 150 A95 95 0 0 1 245 150"
+      fill="none" stroke="#35e08b" stroke-width="18"
+      pathLength="100"
+      stroke-dasharray="30 70"/>
+
+<!-- 黃色：30～60 -->
+<path d="M55 150 A95 95 0 0 1 245 150"
+      fill="none" stroke="#ffd166" stroke-width="18"
+      pathLength="100"
+      stroke-dasharray="30 70"
+      stroke-dashoffset="-30"/>
+
+<!-- 紅色：60～100 -->
+<path d="M55 150 A95 95 0 0 1 245 150"
+      fill="none" stroke="#ff5c70" stroke-width="18"
+      pathLength="100"
+      stroke-dasharray="40 60"
+      stroke-dashoffset="-60"/><line id="needleBefore" class="needle"
+      x1="150" y1="150" x2="55" y2="150"/>
+<circle class="needle-hub" cx="150" cy="150" r="8"/>
+<text id="scoreBefore" class="gauge-score"
+      x="150" y="125" text-anchor="middle">0</text>
+<text id="levelBefore" x="150" y="173"
+      text-anchor="middle" font-size="14"
+      fill="#35e08b">低風險</text>
+<text class="gauge-caption" x="55" y="178"
+      text-anchor="middle">0</text>
+<text class="gauge-caption" x="245" y="178"
+      text-anchor="middle">100</text>
+</svg>
+</div>
+
+<div class="gauge-card">
+<div class="gauge-title">施工後風險</div>
+<svg class="gauge" viewBox="0 0 300 190">
+<!-- 綠色：0～30 -->
+<path d="M55 150 A95 95 0 0 1 245 150"
+      fill="none" stroke="#35e08b" stroke-width="18"
+      pathLength="100"
+      stroke-dasharray="30 70"/>
+
+<!-- 黃色：30～60 -->
+<path d="M55 150 A95 95 0 0 1 245 150"
+      fill="none" stroke="#ffd166" stroke-width="18"
+      pathLength="100"
+      stroke-dasharray="30 70"
+      stroke-dashoffset="-30"/>
+
+<!-- 紅色：60～100 -->
+<path d="M55 150 A95 95 0 0 1 245 150"
+      fill="none" stroke="#ff5c70" stroke-width="18"
+      pathLength="100"
+      stroke-dasharray="40 60"
+      stroke-dashoffset="-60"/><line id="needleAfter" class="needle"
+      x1="150" y1="150" x2="55" y2="150"/>
+<circle class="needle-hub" cx="150" cy="150" r="8"/>
+<text id="scoreAfter" class="gauge-score"
+      x="150" y="125" text-anchor="middle">0</text>
+<text id="levelAfter" x="150" y="173"
+      text-anchor="middle" font-size="14"
+      fill="#35e08b">低風險</text>
+<text class="gauge-caption" x="55" y="178"
+      text-anchor="middle">0</text>
+<text class="gauge-caption" x="245" y="178"
+      text-anchor="middle">100</text>
+</svg>
+</div>
+
+</div>
+
+<div class="summary" id="riskSummaryText">
+風險評估計算中……
+</div>
+
+</div>
+</div>
+</section>
+
+<section class="panel">
+<h2>三、自動改善建議</h2>
+<div id="recommendationBox"></div>
+</section>
+
+</div>
+
+<!-- ==================== 分頁二 ==================== -->
+
+<div id="page-finance" class="page">
+
+<section class="panel">
+<h2>一、事故情境設定</h2>
+
+<div class="input-grid">
+
+<div class="input-box">
+<label for="scenarioSelect">事故情境</label>
+<select id="scenarioSelect" onchange="loadScenario()">
+<option value="small">小型事故</option>
+<option value="normal" selected>一般事故</option>
+<option value="pressure">高壓力事故</option>
+</select>
+<div class="unit">選擇情境後自動帶入預估損失</div>
+</div>
+
+<div class="input-box">
+<label for="lossInput">預估事故損失（NT$）</label>
+<input id="lossInput" type="number" min="0" value="800000">
+<div class="unit">可自行修改事故損失金額</div>
+</div>
+
+<div class="input-box">
+<label for="deductibleInput">保險自負額（NT$）</label>
+<input id="deductibleInput" type="number" min="0" value="50000">
+<div class="unit">由企業自行負擔的起賠金額</div>
+</div>
+
+<div class="input-box">
+<label for="claimLimitInput">單次理賠上限（NT$）</label>
+<input id="claimLimitInput" type="number" min="0" value="1000000">
+<div class="unit">單一事故可申請的最高理賠額</div>
+</div>
+
+<div class="input-box">
+<label for="annualLimitInput">年度理賠上限（NT$）</label>
+<input id="annualLimitInput" type="number" min="0" value="2000000">
+<div class="unit">年度累積理賠金額上限</div>
+</div>
+
+<div class="input-box">
+<label for="targetFundInput">預計準備資金（NT$）</label>
+<input id="targetFundInput" type="number" min="0" value="1000000">
+<div class="unit">專案預計準備的風險資金</div>
+</div>
+
+<div class="input-box">
+<label for="currentFundInput">目前可用資金（NT$）</label>
+<input id="currentFundInput" type="number" min="0" value="700000">
+<div class="unit">目前已準備或可動用的資金</div>
+</div>
+
+<div class="input-box">
+<label for="excludeInput">除外責任估計（NT$）</label>
+<input id="excludeInput" type="number" min="0" value="0">
+<div class="unit">保單不承保項目的預估損失</div>
+</div>
+
+</div>
+</section>
+
+<section class="panel">
+<h2>二、保險與資金試算結果</h2>
+
+<div class="cards">
+
+<div class="card">
+<div class="card-title">預估保險理賠金</div>
+<div class="card-value" id="resClaim">0</div>
+<div class="card-detail">NT$</div>
+</div>
+
+<div class="card">
+<div class="card-title">企業自負負擔</div>
+<div class="card-value" id="resBurden">0</div>
+<div class="card-detail">NT$</div>
+</div>
+
+<div class="card">
+<div class="card-title">準備資金缺口</div>
+<div class="card-value" id="resGap">0</div>
+<div class="card-detail">NT$</div>
+</div>
+
+</div>
+
+<div class="summary">
+<strong>試算邏輯：</strong><br>
+保險理賠金＝事故損失扣除自負額後，再依單次理賠上限與年度理賠上限計算。<br>
+企業自負負擔＝事故損失＋除外責任估計－保險理賠金。<br>
+準備資金缺口＝預計準備資金－目前可用資金；若小於 0，則以 0 計算。
+</div>
+</section>
+
+</div>
+
+<!-- ==================== 分頁三 ==================== -->
+
+<div id="page-dashboard" class="page">
+
+<section class="panel">
+<h2>一、專案執行總覽</h2>
+
+<table>
+<thead>
+<tr>
+<th>監測項目</th>
+<th>目前數值／目標值</th>
+<th>狀態</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>棲地復育面積</td>
+<td id="dashArea">-</td>
+<td id="dashAreaStatus">-</td>
+</tr>
+<tr>
+<td>原生植物存活株數</td>
+<td id="dashPlants">-</td>
+<td id="dashPlantsStatus">-</td>
+</tr>
+<tr>
+<td>監測完成次數</td>
+<td id="dashVisits">-</td>
+<td id="dashVisitsStatus">-</td>
+</tr>
+<tr>
+<td>自籌經費</td>
+<td id="dashFund">-</td>
+<td id="dashFundStatus">-</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="panel">
+<h2>二、風險狀態總覽</h2>
+
+<table>
+<thead>
+<tr>
+<th>評估階段</th>
+<th>加權風險分數</th>
+<th>風險等級</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>施工前</td>
+<td id="dashRiskBefore">-</td>
+<td id="dashRiskBeforeStatus">-</td>
+</tr>
+<tr>
+<td>施工後</td>
+<td id="dashRiskAfter">-</td>
+<td id="dashRiskAfterStatus">-</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="panel">
+<h2>三、自動風險提醒</h2>
+<div id="dashboardAlerts"></div>
+</section>
+
+</div>
+
+<div class="footer">
+生態監測與風險評估暨資金管理平台｜即時試算原型
+</div>
+
+</div>
+
+<script>
+
+/* =========================
+   一、分頁切換
+========================= */
+
+function switchPage(pageId){
+
+  document.querySelectorAll('.page').forEach(page=>{
+    page.classList.remove('active');
+  });
+
+  document.querySelectorAll('nav button').forEach(button=>{
+    button.classList.remove('active');
+  });
+
+  document.getElementById('page-'+pageId).classList.add('active');
+  document.getElementById('btn-'+pageId).classList.add('active');
+}
+
+
+/* =========================
+   二、風險項目與初始資料
+========================= */
+
+const riskItems=[
+  {name:"棲地敏感性",weight:30,before:3,after:2},
+  {name:"植被移除比例",weight:25,before:3,after:2},
+  {name:"逕流影響",weight:15,before:3,after:3},
+  {name:"夜間施工頻率",weight:5,before:3,after:2},
+  {name:"監測與治理缺口",weight:10,before:2,after:1},
+  {name:"熱污染",weight:15,before:3,after:2}
+];
+
+let latestData={
+  before:0,
+  after:0,
+  beforeLevel:"",
+  afterLevel:"",
+  beforeHabitat:3,
+  afterHabitat:2
+};
+
+
+/* =========================
+   三、基本工具
+========================= */
+
+function number(id){
+  const value=Number(document.getElementById(id).value);
+  return Number.isFinite(value)?Math.max(0,value):0;
+}
+
+function money(value){
+  return Math.round(value).toLocaleString('zh-TW');
+}
+
+function percent(value){
+  return value.toFixed(1)+"%";
+}
+
+function clamp(value,min,max){
+  return Math.max(min,Math.min(max,value));
+}
+
+
+/* =========================
+   四、建立風險評分表
+========================= */
+
+function initRiskTable(){
+
+  const tbody=document.getElementById('riskRows');
+  tbody.innerHTML='';
+
+  riskItems.forEach((item,index)=>{
+
+    const tr=document.createElement('tr');
+
+    tr.innerHTML=`
+      <td>${item.name}</td>
+      <td class="weight">${item.weight}%</td>
+
+      <td>
+        <select id="beforeRisk${index}">
+          ${[1,2,3,4,5].map(v=>
+            `<option value="${v}" ${v===item.before?'selected':''}>${v}</option>`
+          ).join('')}
+        </select>
+      </td>
+
+      <td>
+        <select id="afterRisk${index}">
+          ${[1,2,3,4,5].map(v=>
+            `<option value="${v}" ${v===item.after?'selected':''}>${v}</option>`
+          ).join('')}
+        </select>
+      </td>
+
+      <td class="contribution" id="before-contrib-${index}">0</td>
+      <td class="contribution" id="after-contrib-${index}">0</td>
+    `;
+
+    tbody.appendChild(tr);
+
+    document.getElementById(`beforeRisk${index}`)
+      .addEventListener('change',()=>{
+        item.before=Number(document.getElementById(`beforeRisk${index}`).value);
+        calculateAll();
+      });
+
+    document.getElementById(`afterRisk${index}`)
+      .addEventListener('change',()=>{
+        item.after=Number(document.getElementById(`afterRisk${index}`).value);
+        calculateAll();
+      });
+
+  });
+
+}
+
+
+/* =========================
+   五、風險等級判定
+========================= */
+
+// 一般風險分級：
+// 0-未滿30：低風險
+// 30-未滿60：中風險
+// 60-100：高風險
+
+// 特別規則：該階段只要任一風險項目達5分，即強制列為高風險。
+
+function getRiskLevel(score,hasAnyFive){
+
+  if(hasAnyFive){
+    return '高風險';
+  }
+
+  if(score<30)return '低風險';
+  if(score<60)return '中風險';
+
+  return '高風險';
+}
+
+function getRiskClass(score,hasAnyFive){
+
+  if(hasAnyFive)return 'high';
+
+  if(score<30)return 'low';
+  if(score<60)return 'medium';
+
+  return 'high';
+}
+
+
+/* =========================
+   六、更新風險儀表
+========================= */
+
+function updateGauge(type,score,hasAnyFive){
+
+  const scoreEl=document.getElementById('score'+type);
+  const levelEl=document.getElementById('level'+type);
+  const needle=document.getElementById('needle'+type);
+
+  const safeScore=clamp(score,0,100);
+
+  if(scoreEl){
+    scoreEl.textContent=safeScore.toFixed(1);
+  }
+
+  const level=getRiskLevel(safeScore,hasAnyFive);
+  const levelClass=getRiskClass(safeScore,hasAnyFive);
+
+  if(levelEl){
+    levelEl.textContent=level;
+    levelEl.style.fill=
+      levelClass==='high'?'#ff5c70':
+      levelClass==='medium'?'#ffd166':'#35e08b';
+  }
+
+  if(needle){
+
+    // 直接計算指針端點，不依賴 CSS transform-origin
+    // 0分=左側，50分=正上方，100分=右側
+
+    const angle=Math.PI-(safeScore/100)*Math.PI;
+
+    const cx=150;
+    const cy=150;
+    const radius=95;
+
+    const x2=cx+radius*Math.cos(angle);
+    const y2=cy-radius*Math.sin(angle);
+
+    needle.setAttribute('x2',x2);
+    needle.setAttribute('y2',y2);
+  }
+
+}
+
+
+/* =========================
+   七、更新進度卡片
+========================= */
+
+function updateCard(id,ratio,detail,greenThreshold,yellowThreshold){
+
+  const valueEl=document.getElementById(id+'Value');
+  const detailEl=document.getElementById(id+'Detail');
+  const barEl=document.getElementById(id+'Bar');
+  const lampEl=document.getElementById('lamp'+id.charAt(0).toUpperCase()+id.slice(1));
+
+  const safeRatio=Math.max(0,ratio);
+
+  valueEl.textContent=percent(safeRatio);
+  detailEl.textContent=detail;
+
+  barEl.style.width=Math.min(safeRatio,100)+'%';
+
+  let status='red';
+
+  if(safeRatio>=greenThreshold){
+    status='green';
+  }else if(safeRatio>=yellowThreshold){
+    status='yellow';
+  }
+
+  lampEl.className='lamp '+status;
+
+  barEl.style.background=
+    status==='green'?'var(--green)':
+    status==='yellow'?'var(--yellow)':'var(--red)';
+}
+
+
+/* =========================
+   八、自動改善建議
+========================= */
+
+function addRecommendation(list,title,status,description,advice){
+
+  const statusText=
+    status==='high'?'高風險':
+    status==='medium'?'中度注意':'良好';
+
+  const statusClass=
+    status==='high'?'status-high':
+    status==='medium'?'status-medium':'status-low';
+
+  list.push(`
+    <div class="recommendation-item ${status}">
+      <span class="recommendation-status ${statusClass}">
+        ${statusText}
+      </span>
+      <strong>${title}</strong>
+      <p>${description}</p>
+      <p>改善建議：${advice}</p>
+    </div>
+  `);
+
+}
+
+
+function generateRecommendations(data){
+
+  const list=[];
+
+  if(data.areaRatio<70){
+
+    addRecommendation(
+      list,
+      '棲地復育面積進度不足',
+      'high',
+      `目前復育面積完成率為 ${percent(data.areaRatio)}。`,
+      '重新檢視復育範圍、施工進度與植栽配置，優先完成重要棲地區域。'
+    );
+
+  }else if(data.areaRatio<80){
+
+    addRecommendation(
+      list,
+      '棲地復育面積需要加強',
+      'medium',
+      `目前復育面積完成率為 ${percent(data.areaRatio)}。`,
+      '持續追蹤復育進度，確認植栽及棲地改善工作依照時程執行。'
+    );
+
+  }
+
+  if(data.plantsRatio<85){
+
+    addRecommendation(
+      list,
+      '原生植物存活率偏低',
+      'high',
+      `目前原生植物目標完成率為 ${percent(data.plantsRatio)}。`,
+      '檢查植栽生長環境、土壤與水分條件，補植適地原生植物並持續追蹤。'
+    );
+
+  }else if(data.plantsRatio<90){
+
+    addRecommendation(
+      list,
+      '原生植物存活狀況需要注意',
+      'medium',
+      `目前原生植物目標完成率為 ${percent(data.plantsRatio)}。`,
+      '增加植栽巡查頻率，記錄植栽生長情形及可能的環境壓力。'
+    );
+
+  }
+
+  if(data.visitsRatio<90){
+
+    addRecommendation(
+      list,
+      '監測次數不足',
+      'high',
+      `目前監測完成率為 ${percent(data.visitsRatio)}。`,
+      '安排補充監測時程，優先完成尚未執行的監測工作。'
+    );
+
+  }else if(data.visitsRatio<100){
+
+    addRecommendation(
+      list,
+      '仍有監測工作尚未完成',
+      'medium',
+      `目前監測完成率為 ${percent(data.visitsRatio)}。`,
+      '依照監測計畫完成剩餘次數，並保留監測紀錄。'
+    );
+
+  }
+
+  if(data.fundRatio<80){
+
+    addRecommendation(
+      list,
+      '自籌經費覆蓋率不足',
+      'high',
+      `目前自籌經費目標完成率為 ${percent(data.fundRatio)}。`,
+      '重新檢視經費配置與資金來源，優先確保必要的生態監測及改善工作。'
+    );
+
+  }else if(data.fundRatio<100){
+
+    addRecommendation(
+      list,
+      '自籌經費仍有缺口',
+      'medium',
+      `目前自籌經費目標完成率為 ${percent(data.fundRatio)}。`,
+      '持續追蹤資金到位情形，確認後續監測與維護經費。'
+    );
+
+  }
+
+  const riskAdvice=[
+    {
+      title:'棲地敏感性',
+      advice:'避開敏感棲地及重要生物活動區域，施工前進行現地調查，必要時調整施工範圍與時程。'
+    },
+    {
+      title:'植被移除比例',
+      advice:'縮小植被移除範圍，優先保留原生植被，並建立植被移除與補植紀錄。'
+    },
+    {
+      title:'逕流影響',
+      advice:'設置適當排水與沉砂措施，避免施工逕流造成周邊棲地沖刷或水質變化。'
+    },
+    {
+      title:'夜間施工頻率',
+      advice:'盡量避免夜間施工，降低照明與噪音干擾，必要時採取遮光及施工時段管制。'
+    },
+    {
+      title:'監測與治理缺口',
+      advice:'建立定期監測、異常通報及改善追蹤機制，並明確指定管理責任人員。'
+    },
+    {
+      title:'熱污染',
+      advice:'定期監測排放熱源及周邊環境溫度，檢視設備散熱與冷卻管理措施，避免局部環境溫度升高影響生物棲地。'
+    }
+  ];
+
+  riskItems.forEach((item,index)=>{
+
+    const before=item.before;
+    const after=item.after;
+    const advice=riskAdvice[index];
+
+    if(before===5||after===5){
+
+      addRecommendation(
+        list,
+        `⚠️ ${item.name}評分達5分：該階段強制列為高風險`,
+        'high',
+        `施工前評分 ${before} 分，施工後評分 ${after} 分。施工前或施工後任一階段達到5分，該階段即自動判定為高風險。`,
+        advice.advice
+      );
+
+    }else if(before>=4||after>=4){
+
+      addRecommendation(
+        list,
+        advice.title+'偏高',
+        'high',
+        `施工前評分 ${before} 分，施工後評分 ${after} 分。`,
+        advice.advice
+      );
+
+    }else if(before===3||after===3){
+
+      addRecommendation(
+        list,
+        advice.title+'需要持續管理',
+        'medium',
+        `施工前評分 ${before} 分，施工後評分 ${after} 分。`,
+        advice.advice
+      );
+
+    }
+
+  });
+
+  if(list.length===0){
+
+    addRecommendation(
+      list,
+      '目前各項監測指標均符合設定門檻',
+      'low',
+      '目前未發現需要立即改善的指標。',
+      '持續執行定期監測、植栽維護及風險檢查，並保留調查紀錄，以確認生態狀況穩定。'
+    );
+
+  }
+
+  document.getElementById('recommendationBox').innerHTML=list.join('');
+
+}
+
+
+/* =========================
+   九、更新第三分頁儀表板
+========================= */
+
+function dashboardStatus(ratio,green,yellow){
+
+  if(ratio>=green){
+    return '<span style="color:var(--green);font-weight:bold">🟢 綠燈</span>';
+  }
+
+  if(ratio>=yellow){
+    return '<span style="color:var(--yellow);font-weight:bold">🟡 黃燈</span>';
+  }
+
+  return '<span style="color:var(--red);font-weight:bold">🔴 紅燈</span>';
+}
+
+function riskStatus(level){
+
+  if(level==='高風險'){
+    return '<span style="color:var(--red);font-weight:bold">🔴 高風險</span>';
+  }
+
+  if(level==='中風險'){
+    return '<span style="color:var(--yellow);font-weight:bold">🟡 中風險</span>';
+  }
+
+  return '<span style="color:var(--green);font-weight:bold">🟢 低風險</span>';
+}
+
+
+function updateDashboard(data){
+
+  document.getElementById('dashArea').textContent=
+    `${money(data.area)} / ${money(data.targetArea)} m² (${percent(data.areaRatio)})`;
+
+  document.getElementById('dashPlants').textContent=
+    `${money(data.plants)} / ${money(data.targetPlants)} 株 (${percent(data.plantsRatio)})`;
+
+  document.getElementById('dashVisits').textContent=
+    `${money(data.visits)} / ${money(data.targetVisits)} 次 (${percent(data.visitsRatio)})`;
+
+  document.getElementById('dashFund').textContent=
+    `NT$${money(data.budget)} / NT$${money(data.targetBudget)} (${percent(data.fundRatio)})`;
+
+  document.getElementById('dashAreaStatus').innerHTML=
+    dashboardStatus(data.areaRatio,80,70);
+
+  document.getElementById('dashPlantsStatus').innerHTML=
+    dashboardStatus(data.plantsRatio,90,85);
+
+  document.getElementById('dashVisitsStatus').innerHTML=
+    dashboardStatus(data.visitsRatio,100,90);
+
+  document.getElementById('dashFundStatus').innerHTML=
+    dashboardStatus(data.fundRatio,100,80);
+
+  document.getElementById('dashRiskBefore').textContent=
+    `${data.before.toFixed(1)} 分（${data.beforeLevel}）`;
+
+  document.getElementById('dashRiskAfter').textContent=
+    `${data.after.toFixed(1)} 分（${data.afterLevel}）`;
+
+  document.getElementById('dashRiskBeforeStatus').innerHTML=
+    riskStatus(data.beforeLevel);
+
+  document.getElementById('dashRiskAfterStatus').innerHTML=
+    riskStatus(data.afterLevel);
+
+  const alerts=[];
+
+  if(data.areaRatio<80)alerts.push('棲地復育進度尚未達到80%。');
+  if(data.plantsRatio<90)alerts.push('原生植物存活率尚未達到90%。');
+  if(data.visitsRatio<100)alerts.push('尚有監測工作未完成。');
+  if(data.fundRatio<100)alerts.push('自籌經費尚未完全覆蓋目標。');
+
+  if(data.beforeLevel==='高風險'){
+    alerts.push('施工前風險為高風險，應優先檢視風險控制措施。');
+  }
+
+  if(data.afterLevel==='高風險'){
+    alerts.push('施工後風險仍為高風險，應加強改善及持續追蹤。');
+  }
+
+  document.getElementById('dashboardAlerts').innerHTML=
+    alerts.length
+    ?alerts.map(a=>`
+      <div class="recommendation-item high">
+        <strong>⚠️ 管理提醒</strong>
+        <p>${a}</p>
+      </div>
+    `).join('')
+    :`
+      <div class="recommendation-item low">
+        <strong>目前無待處理的指標提醒</strong>
+        <p>請持續執行定期監測及資料更新。</p>
+      </div>
+    `;
+}
+
+
+/* =========================
+   十、主要即時更新
+========================= */
+
+function calculateAll(){
+
+  const area=number('areaInput');
+  const plants=number('plantsInput');
+  const visits=number('visitsInput');
+  const budget=number('budgetInput');
+
+  // 讀取可自行調整的四項目標
+  const targetArea=Math.max(number('targetAreaInput'),0.01);
+  const targetPlants=Math.max(number('targetPlantsInput'),0.01);
+  const targetVisits=Math.max(number('targetVisitsInput'),0.01);
+  const targetBudget=Math.max(number('targetBudgetInput'),0.01);
+
+  const areaRatio=area/targetArea*100;
+  const plantsRatio=plants/targetPlants*100;
+  const visitsRatio=visits/targetVisits*100;
+  const fundRatio=budget/targetBudget*100;
+
+  updateCard(
+    'area',
+    areaRatio,
+    money(area)+' / '+money(targetArea)+' m²',
+    80,70
+  );
+
+  updateCard(
+    'plants',
+    plantsRatio,
+    money(plants)+' / '+money(targetPlants)+' 株',
+    90,85
+  );
+
+  updateCard(
+    'visits',
+    visitsRatio,
+    money(visits)+' / '+money(targetVisits)+' 次',
+    100,90
+  );
+
+  updateCard(
+    'fund',
+    fundRatio,
+    'NT$'+money(budget)+' / NT$'+money(targetBudget),
+    100,80
+  );
+
+  // 計算風險加權分數
+  let totalBefore=0;
+  let totalAfter=0;
+
+  riskItems.forEach((item,index)=>{
+
+    const cBefore=item.weight*((item.before-1)/4);
+    const cAfter=item.weight*((item.after-1)/4);
+
+    totalBefore+=cBefore;
+    totalAfter+=cAfter;
+
+    document.getElementById(`before-contrib-${index}`).textContent=
+      cBefore.toFixed(2);
+
+    document.getElementById(`after-contrib-${index}`).textContent=
+      cAfter.toFixed(2);
+
+  });
+
+  // 任一風險項目達5分，該階段強制列為高風險
+  const beforeHasFive=riskItems.some(item=>item.before===5);
+  const afterHasFive=riskItems.some(item=>item.after===5);
+
+  const beforeLevel=getRiskLevel(totalBefore,beforeHasFive);
+  const afterLevel=getRiskLevel(totalAfter,afterHasFive);
+
+  updateGauge('Before',totalBefore,beforeHasFive);
+  updateGauge('After',totalAfter,afterHasFive);
+
+  // 儲存目前風險狀態
+  latestData={
+    before:totalBefore,
+    after:totalAfter,
+    beforeLevel:beforeLevel,
+    afterLevel:afterLevel,
+    beforeHasFive:beforeHasFive,
+    afterHasFive:afterHasFive
+  };
+
+  // 風險摘要
+  const summary=document.getElementById('riskSummaryText');
+
+  let extra='';
+
+  if(beforeHasFive){
+    const names=riskItems
+      .filter(item=>item.before===5)
+      .map(item=>item.name)
+      .join('、');
+
+    extra+=`<br>⚠️ 施工前「${names}」評分達5分，施工前階段已強制列為高風險。`;
+  }
+
+  if(afterHasFive){
+    const names=riskItems
+      .filter(item=>item.after===5)
+      .map(item=>item.name)
+      .join('、');
+
+    extra+=`<br>⚠️ 施工後「${names}」評分達5分，施工後階段已強制列為高風險。`;
+  }
+
+  const difference=totalBefore-totalAfter;
+
+  let comparison='';
+
+  if(difference>0){
+    comparison=`施工後加權分數較施工前降低 ${difference.toFixed(2)} 分。`;
+  }else if(difference<0){
+    comparison=`施工後加權分數較施工前增加 ${Math.abs(difference).toFixed(2)} 分。`;
+  }else{
+    comparison='施工前後加權分數相同。';
+  }
+
+  summary.innerHTML=`
+    <strong>風險評估摘要：</strong><br>
+
+    施工前總風險分：
+    <span class="level ${getRiskClass(totalBefore,beforeHasFive)}">
+    ${totalBefore.toFixed(2)} 分（${beforeLevel}）
+    </span><br>
+
+    施工後總風險分：
+    <span class="level ${getRiskClass(totalAfter,afterHasFive)}">
+    ${totalAfter.toFixed(2)} 分（${afterLevel}）
+    </span><br>
+
+    ${comparison}
+    ${extra}
+  `;
+
+  // 更新改善建議
+  generateRecommendations({
+    areaRatio,
+    plantsRatio,
+    visitsRatio,
+    fundRatio
+  });
+
+  // 更新第三分頁儀表板
+  updateDashboard({
+    area,
+    plants,
+    visits,
+    budget,
+    targetArea,
+    targetPlants,
+    targetVisits,
+    targetBudget,
+    areaRatio,
+    plantsRatio,
+    visitsRatio,
+    fundRatio,
+    before:totalBefore,
+    after:totalAfter,
+    beforeLevel,
+    afterLevel
+  });
+
+}
+
+
+/* =========================
+   十一、保險與資金試算
+========================= */
+
+function loadScenario(){
+
+  const sc=document.getElementById('scenarioSelect').value;
+
+  if(sc==='small'){
+    document.getElementById('lossInput').value=120000;
+  }
+
+  if(sc==='normal'){
+    document.getElementById('lossInput').value=800000;
+  }
+
+  if(sc==='pressure'){
+    document.getElementById('lossInput').value=2200000;
+  }
+
+  calculateFinance();
+}
+
+
+function calculateFinance(){
+
+  const L=number('lossInput');
+  const D=number('deductibleInput');
+  const C=number('claimLimitInput');
+  const A=number('annualLimitInput');
+  const T=number('targetFundInput');
+  const F=number('currentFundInput');
+  const X=number('excludeInput');
+
+  // 保險理賠金
+  const claim=Math.min(
+    Math.max(L-D,0),
+    C,
+    A
+  );
+
+  // 企業自負負擔
+  const burden=Math.max(L+X-claim,0);
+
+  // 自留資金缺口
+  const gap=Math.max(T-F,0);
+
+  document.getElementById('resClaim').textContent=money(claim);
+  document.getElementById('resBurden').textContent=money(burden);
+  document.getElementById('resGap').textContent=money(gap);
+
+}
+
+
+/* =========================
+   十二、初始化
+========================= */
+
+window.addEventListener('DOMContentLoaded',function(){
+
+  initRiskTable();
+
+  // 分頁一：實際執行數據與四項可調整目標
+  [
+    'areaInput',
+    'plantsInput',
+    'visitsInput',
+    'budgetInput',
+    'targetAreaInput',
+    'targetPlantsInput',
+    'targetVisitsInput',
+    'targetBudgetInput'
+  ].forEach(id=>{
+
+    document.getElementById(id).addEventListener('input',calculateAll);
+
+  });
+
+  // 分頁二：所有試算欄位
+  [
+    'lossInput',
+    'deductibleInput',
+    'claimLimitInput',
+    'annualLimitInput',
+    'targetFundInput',
+    'currentFundInput',
+    'excludeInput'
+  ].forEach(id=>{
+
+    document.getElementById(id).addEventListener('input',calculateFinance);
+
+  });
+
+  calculateAll();
+  calculateFinance();
+
+});
+
+</script>
+
+</body>
+</html>
